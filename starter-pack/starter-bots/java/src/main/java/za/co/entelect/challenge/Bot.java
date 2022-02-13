@@ -1,10 +1,15 @@
 package za.co.entelect.challenge;
 
 import za.co.entelect.challenge.command.*;
-import za.co.entelect.challenge.entities.*;
+import za.co.entelect.challenge.entities.Car;
+import za.co.entelect.challenge.entities.GameState;
+import za.co.entelect.challenge.entities.Lane;
+import za.co.entelect.challenge.enums.PowerUps;
 import za.co.entelect.challenge.enums.Terrain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static java.lang.Math.max;
 
@@ -18,6 +23,14 @@ public class Bot {
     private Car opponent;
     private Car myCar;
     private final static Command FIX = new FixCommand();
+    private final static Command ACCELERATE = new AccelerateCommand();
+    private final static Command LIZARD = new LizardCommand();
+    private final static Command OIL = new OilCommand();
+    private final static Command BOOST = new BoostCommand();
+    private final static Command EMP = new EmpCommand();
+
+    private final static Command TURN_RIGHT = new ChangeLaneCommand(1);
+    private final static Command TURN_LEFT = new ChangeLaneCommand(-1);
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
@@ -30,15 +43,91 @@ public class Bot {
     }
 
     public Command run() {
-        List<Object> blocks = getBlocksInFront(myCar.position.lane, myCar.position.block);
-        if (myCar.damage >= 5) {
+
+        if (myCar.damage >= 4){
+            return FIX;
+        }
+        if (myCar.speed <= 3){
+            return ACCELERATE;
+        }
+
+        // myCar Location
+        int carLane = myCar.position.lane;
+        int carBlock = myCar.position.block;
+
+        // opponent Location
+        int oppLane = opponent.position.lane;
+        int oppBlock = opponent.position.block;
+
+        List<Object> blocks = getBlocksInFront(carLane, myCar.position.block);
+        List<Object> nextBlocks = blocks.subList(0,1);
+        List<Object> blocksRight = getBlocksInFront(carLane, myCar.position.block);
+        List<Object> blocksLeft = getBlocksInFront(carLane, myCar.position.block);
+
+        if (carLane != 4) {
+            blocksRight = getBlocksInFront(carLane, carBlock - 1);
+        }
+        if (carLane != 1) {
+            blocksLeft = getBlocksInFront(carLane, carBlock-1);
+        }
+
+        List<Object> nextBlocksRight = blocksRight.subList(0,1);
+        List<Object> nextBlocksLeft = blocksLeft.subList(0,1);
+
+
+        if (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || nextBlocks.contains(Terrain.WALL)) {
+            if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+                return LIZARD;
+            } else {
+                if (nextBlocks.contains(Terrain.WALL)){
+                    if (carLane == 4){
+                        return TURN_LEFT;
+                    } else if (carLane == 1){
+                        return TURN_RIGHT;
+                    } else if (nextBlocksRight.contains(Terrain.WALL)){
+                        return TURN_LEFT;
+                    } else if (nextBlocksLeft.contains(Terrain.WALL)){
+                        return TURN_RIGHT;
+                    } else if (availableDistance(blocksLeft) > availableDistance(blocksRight)){
+                        return TURN_LEFT;
+                    } else if (availableDistance(blocksLeft) == availableDistance(blocksRight)){
+                        if (carLane == 2){
+                            return TURN_RIGHT;
+                        } else {
+                            return TURN_LEFT;
+                        }
+                    } else {
+                        return TURN_RIGHT;
+                    }
+                }
+            }
+        }
+
+        if (availableDistance(blocksRight) > availableDistance(blocks) && availableDistance(blocksRight) > availableDistance(blocksLeft)){
+            return TURN_RIGHT;
+        } else if (availableDistance(blocksLeft) > availableDistance(blocks)){
+            return TURN_LEFT;
+        }
+
+        if (myCar.damage >= 3){
             return new FixCommand();
         }
-        if (blocks.contains(Terrain.MUD)) {
-            int i = random.nextInt(directionList.size());
-            return new ChangeLaneCommand(directionList.get(i));
+
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups)){
+            return EMP;
         }
-        return new AccelerateCommand();
+        if (hasPowerUp(PowerUps.TWEET, myCar.powerups)){
+            return new TweetCommand(oppLane, oppBlock+1);
+        }
+        if (availableDistance(blocks) >= 15 && hasPowerUp(PowerUps.BOOST, myCar.powerups)){
+            return BOOST;
+        }
+
+        if (myCar.damage != 0 && myCar.speed <= 8){
+            return new FixCommand();
+        }
+
+        return ACCELERATE;
     }
 
     /**
@@ -62,4 +151,27 @@ public class Bot {
         return blocks;
     }
 
+    private int availableDistance(List<Object> blocks){
+        int count = 0;
+        for (int i = 0; i < 20; i++){
+            if (blocks.subList(i, i).contains(Terrain.EMPTY) || blocks.subList(i, i).contains(Terrain.BOOST) || blocks.subList(i, i).contains(Terrain.OIL_POWER) || blocks.subList(i, i).contains(Terrain.LIZARD) || blocks.subList(i, i).contains(Terrain.EMP) || blocks.subList(i, i).contains(Terrain.TWEET)){
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {
+        for (PowerUps powerUp: available) {
+            if (powerUp.equals(powerUpToCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
+

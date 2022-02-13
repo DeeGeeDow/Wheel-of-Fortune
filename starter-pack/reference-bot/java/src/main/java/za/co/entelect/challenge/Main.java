@@ -15,8 +15,7 @@ public class Main {
     private static final String STATE_FILE_NAME = "state.json";
 
     /**
-     * Read the current state, feed it to the bot, get the output and print it to
-     * stdout
+     * Read the current state, feed it to the bot, get the output and print it to stdout
      *
      * @param args the args
      **/

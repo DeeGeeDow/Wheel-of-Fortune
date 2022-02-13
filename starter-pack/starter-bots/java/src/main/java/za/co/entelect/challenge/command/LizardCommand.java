@@ -1,10 +1,9 @@
 package za.co.entelect.challenge.command;
 
-public class FixCommand implements Command {
+public class LizardCommand implements Command {
 
     @Override
     public String render() {
-        return String.format("FIX");
+        return String.format("USE_LIZARD");
     }
-
 }

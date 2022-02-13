@@ -2,7 +2,7 @@
 	"author": "Wheel of Fortune",
 	"email": "-",
 	"nickName": "Wheel of Fortune",
-	"botLocation": "/",
-	"botFileName": "java-starter-bot-jar-with-dependencies.jar",
+	"botLocation": "/target",
+	"botFileName": "Wheel-of-Fortune.jar",
 	"botLanguage": "java"
 }

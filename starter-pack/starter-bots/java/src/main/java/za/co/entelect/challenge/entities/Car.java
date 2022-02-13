@@ -14,11 +14,11 @@ public class Car {
     @SerializedName("speed")
     public int speed;
 
-    @SerializedName("state")
-    public State state;
-
     @SerializedName("damage")
     public int damage;
+
+    @SerializedName("state")
+    public State state;
 
     @SerializedName("powerups")
     public PowerUps[] powerups;
