@@ -43,14 +43,6 @@ public class Bot {
     }
 
     public Command run() {
-
-        if (myCar.damage >= 4){
-            return FIX;
-        }
-        if (myCar.speed <= 3){
-            return ACCELERATE;
-        }
-
         // myCar Location
         int carLane = myCar.position.lane;
         int carBlock = myCar.position.block;
@@ -63,17 +55,63 @@ public class Bot {
         List<Object> nextBlocks = blocks.subList(0,1);
         List<Object> blocksRight = getBlocksInFront(carLane, myCar.position.block);
         List<Object> blocksLeft = getBlocksInFront(carLane, myCar.position.block);
-
         if (carLane != 4) {
-            blocksRight = getBlocksInFront(carLane, carBlock - 1);
+            blocksRight = getBlocksInFront(carLane+1, carBlock - 1);
         }
         if (carLane != 1) {
-            blocksLeft = getBlocksInFront(carLane, carBlock-1);
+            blocksLeft = getBlocksInFront(carLane-1, carBlock-1);
         }
-
         List<Object> nextBlocksRight = blocksRight.subList(0,1);
         List<Object> nextBlocksLeft = blocksLeft.subList(0,1);
 
+        if (myCar.damage >= 4){
+            return FIX;
+        }
+
+        if (isClear(blocks) && myCar.damage == 0 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.speed < 15) {
+            return BOOST;
+        }
+        if (isClear(blocksRight) && carLane != 4){
+            return TURN_RIGHT;
+        }
+        if (isClear(blocksLeft) && carLane != 1){
+            return TURN_LEFT;
+        }
+
+        if (myCar.speed <= 3){
+            if (hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.damage < 3){
+                return BOOST;
+            } else {
+                return ACCELERATE;
+            }
+        }
+
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups) && carBlock < oppBlock && (carLane - carBlock) * (carLane - carBlock) < 4 && opponent.damage < 4){
+            return EMP;
+        } else if (hasPowerUp(PowerUps.LIZARD, myCar.powerups) && (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || nextBlocks.contains(Terrain.WALL))){
+            return LIZARD;
+        }
+
+        if (!(blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST))){
+            if (carLane != 4 && (blocksRight.contains(Terrain.LIZARD) || blocksRight.contains(Terrain.BOOST))){
+                return TURN_RIGHT;
+            } else if (carLane != 1 && (blocksLeft.contains(Terrain.LIZARD) || blocksLeft.contains(Terrain.BOOST))){
+                return TURN_LEFT;
+            }
+        }
+
+        /*
+        if (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || nextBlocks.contains(Terrain.WALL)) {
+            if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+                return LIZARD;
+            } else {
+                if (carLane == 1){
+                    return TURN_RIGHT;
+                } else if (carLane == 4) {
+                    return TURN_LEFT;
+                }
+            }
+        }
 
         if (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || nextBlocks.contains(Terrain.WALL)) {
             if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
@@ -108,21 +146,23 @@ public class Bot {
         } else if (availableDistance(blocksLeft) > availableDistance(blocks)){
             return TURN_LEFT;
         }
+        */
 
         if (myCar.damage >= 3){
             return new FixCommand();
         }
 
-        if (hasPowerUp(PowerUps.EMP, myCar.powerups)){
-            return EMP;
-        }
-        if (hasPowerUp(PowerUps.TWEET, myCar.powerups)){
+        if (hasPowerUp(PowerUps.TWEET, myCar.powerups) && opponent.damage < 4){
             return new TweetCommand(oppLane, oppBlock+1);
         }
+        if (hasPowerUp(PowerUps.OIL, myCar.powerups) && carBlock > oppBlock){
+            return OIL;
+        }
+        /*
         if (availableDistance(blocks) >= 15 && hasPowerUp(PowerUps.BOOST, myCar.powerups)){
             return BOOST;
         }
-
+        */
         if (myCar.damage != 0 && myCar.speed <= 8){
             return new FixCommand();
         }
@@ -161,6 +201,10 @@ public class Bot {
             }
         }
         return count;
+    }
+
+    private boolean isClear(List<Object> blocks){
+        return !(blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || blocks.contains(Terrain.WALL));
     }
 
     private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {
