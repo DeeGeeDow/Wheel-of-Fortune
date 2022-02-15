@@ -85,6 +85,9 @@ public class Bot {
         if (!isClear(blocks) && isClear(blocksLeft) && carLane != 1){
             return TURN_LEFT;
         }
+        if (myCar.boosting && !isClear(blocks) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+            return LIZARD;
+        }
 
         if (hasPowerUp(PowerUps.EMP, myCar.powerups) && carBlock < oppBlock && (carLane - carBlock) * (carLane - carBlock) < 4 && opponent.damage < 4){
             return EMP;
