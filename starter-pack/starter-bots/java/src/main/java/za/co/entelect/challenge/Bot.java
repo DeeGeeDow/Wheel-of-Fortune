@@ -51,51 +51,88 @@ public class Bot {
         int oppLane = opponent.position.lane;
         int oppBlock = opponent.position.block;
 
-        List<Object> blocks = getBlocksInFront(carLane, myCar.position.block);
-        List<Object> nextBlocks = blocks.subList(0,1);
-        List<Object> blocksRight = getBlocksInFront(carLane, myCar.position.block);
-        List<Object> blocksLeft = getBlocksInFront(carLane, myCar.position.block);
+        List<Object> blocks = getBlocksMax(carLane, myCar.position.block);
+        List<Object> nextBlocks = getBlocksReach(carLane, myCar.position.block);
+
+        List<Object> blocksRight = getBlocksMax(carLane, myCar.position.block);
+        List<Object> blocksLeft = getBlocksMax(carLane, myCar.position.block);
+        List<Object> nextBlocksRight = getBlocksReach(carLane, carBlock);
+        List<Object> nextBlocksLeft = getBlocksReach(carLane, carBlock);
+
         if (carLane != 4) {
-            blocksRight = getBlocksInFront(carLane+1, carBlock - 1);
+            blocksRight = getBlocksMax(carLane+1, carBlock - 1);
+            nextBlocksRight = getBlocksReach(carLane+1, carBlock - 1);
         }
         if (carLane != 1) {
-            blocksLeft = getBlocksInFront(carLane-1, carBlock-1);
+            blocksLeft = getBlocksMax(carLane-1, carBlock-1);
+            nextBlocksLeft = getBlocksReach(carLane-1, carBlock-1);
         }
-        List<Object> nextBlocksRight = blocksRight.subList(0,1);
-        List<Object> nextBlocksLeft = blocksLeft.subList(0,1);
 
         if (myCar.damage >= 4){
             return FIX;
         }
 
         if (myCar.speed <= 3){
-            if (hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.damage < 3){
+            if (hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.damage < 3 && isClear(blocks)){
                 return BOOST;
             } else {
                 return ACCELERATE;
             }
         }
 
-        if (isClear(blocks) && myCar.damage == 0 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.speed < 15) {
+        if (isClear(blocks) && myCar.damage == 0 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.boostCounter <= 1) {
             return BOOST;
         }
-        if (!isClear(blocks) && isClear(blocksRight) && carLane != 4){
+        if (myCar.boosting && !isClear(blocks) && isClear(blocksRight) && carLane != 4){
             return TURN_RIGHT;
         }
-        if (!isClear(blocks) && isClear(blocksLeft) && carLane != 1){
+        if (myCar.boosting && !isClear(blocks) && isClear(blocksLeft) && carLane != 1){
             return TURN_LEFT;
         }
         if (myCar.boosting && !isClear(blocks) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
             return LIZARD;
         }
+        if (!isClear(nextBlocks) && isClear(blocksRight) && carLane != 4){
+            return TURN_RIGHT;
+        }
+        if (!isClear(nextBlocks) && isClear(blocksLeft) && carLane != 1){
+            return TURN_LEFT;
+        }
+        if (isClear(blocksRight) && carLane != 4){
+            if (carBlock > oppBlock && containsPowerUp1(nextBlocksRight) && !containsPowerUp1(nextBlocks)) {
+                return TURN_RIGHT;
+            } else if (carBlock <= oppBlock && containsPowerUp2(nextBlocksRight) && !containsPowerUp2(nextBlocks)){
+                return TURN_RIGHT;
+            }
+        }
+        if (isClear(blocksLeft) && carLane != 1){
+            if (carBlock > oppBlock && containsPowerUp1(nextBlocksLeft) && !containsPowerUp1(nextBlocks)) {
+                return TURN_LEFT;
+            } else if (carBlock <= oppBlock && containsPowerUp2(nextBlocksLeft) && !containsPowerUp2(nextBlocks)){
+                return TURN_LEFT;
+            }
+        }
 
         if (hasPowerUp(PowerUps.EMP, myCar.powerups) && carBlock < oppBlock && (carLane - carBlock) * (carLane - carBlock) < 4 && opponent.damage < 4){
             return EMP;
-        } else if (hasPowerUp(PowerUps.LIZARD, myCar.powerups) && (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || nextBlocks.contains(Terrain.WALL))){
-            return LIZARD;
         }
 
-        if (!(containsPowerUp1(blocks)) && !isClear(blocks)){
+        if (!(containsPowerUp1(nextBlocks)) && !isClear(nextBlocks) && !myCar.boosting){
+            if (carBlock > oppBlock) {
+                if (carLane != 4 && ((containsPowerUp1(nextBlocksRight)) || containsPowerUp1(nextBlocksRight))){
+                    return TURN_RIGHT;
+                } else if (carLane != 1 && ((containsPowerUp1(nextBlocksLeft)) || containsPowerUp1(nextBlocksLeft))){
+                    return TURN_LEFT;
+                }
+            } else {
+                if (carLane != 4 && ((containsPowerUp2(nextBlocksRight)) || containsPowerUp2(nextBlocksRight))){
+                    return TURN_RIGHT;
+                } else if (carLane != 1 && ((containsPowerUp2(nextBlocksLeft)) || containsPowerUp2(nextBlocksLeft))){
+                    return TURN_LEFT;
+                }
+            }
+        }
+        if (!(containsPowerUp1(blocks)) && !isClear(blocks) && myCar.boosting){
             if (carBlock > oppBlock) {
                 if (carLane != 4 && ((containsPowerUp1(blocksRight)) || containsPowerUp1(blocksRight))){
                     return TURN_RIGHT;
@@ -111,17 +148,32 @@ public class Bot {
             }
         }
 
+        if (hasPowerUp(PowerUps.LIZARD, myCar.powerups) && !isClear(nextBlocks)){
+            return LIZARD;
+        }
+
         if (myCar.damage >= 3){
             return new FixCommand();
         }
 
+        if (myCar.damage != 0 && myCar.speed <= 8){
+            return new FixCommand();
+        }
+
+        if (myCar.boostCounter <= 1 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && isClear(blocks)){
+            return BOOST;
+        }
 
         if (hasPowerUp(PowerUps.OIL, myCar.powerups) && carBlock > oppBlock){
             return OIL;
         }
 
-        if (myCar.damage != 0 && myCar.speed <= 8){
-            return new FixCommand();
+        if (myCar.speed >= 9 && hasPowerUp(PowerUps.TWEET, myCar.powerups) && carBlock > oppBlock){
+            if (opponent.speed > 9) {
+                return new TweetCommand(oppLane, oppBlock+15);
+            } else if (opponent.speed == 9 && !hasPowerUp(PowerUps.BOOST, opponent.powerups)){
+                return new TweetCommand(oppLane, oppBlock+9);
+            }
         }
 
         return ACCELERATE;
@@ -131,7 +183,7 @@ public class Bot {
      * Returns map of blocks and the objects in the for the current lanes, returns the amount of blocks that can be
      * traversed at max speed.
      **/
-    private List<Object> getBlocksInFront(int lane, int block) {
+    private List<Object> getBlocksMax(int lane, int block) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
         int startBlock = map.get(0)[0].position.block;
@@ -148,13 +200,30 @@ public class Bot {
         return blocks;
     }
 
-    private int availableDistance(List<Object> blocks){
-        int count = 0;
-        for (int i = 0; i < 20; i++){
-            if (blocks.subList(i, i).contains(Terrain.EMPTY) || blocks.subList(i, i).contains(Terrain.BOOST) || blocks.subList(i, i).contains(Terrain.OIL_POWER) || blocks.subList(i, i).contains(Terrain.LIZARD) || blocks.subList(i, i).contains(Terrain.EMP) || blocks.subList(i, i).contains(Terrain.TWEET)){
-                count++;
-            } else {
+    private List<Object> getBlocksReach(int lane, int block) {
+        List<Lane[]> map = gameState.lanes;
+        List<Object> blocks = new ArrayList<>();
+        int startBlock = map.get(0)[0].position.block;
+
+        Lane[] laneList = map.get(lane - 1);
+        for (int i = max(block - startBlock, 0); i <= block - startBlock + maxSpeed; i++) {
+            if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
+            }
+
+            blocks.add(laneList[i].terrain);
+
+        }
+        return blocks;
+    }
+
+    private int dangerOnLane(List<Object> blocks){
+        int count = 0;
+        for (int i = 0; i < 9; i++){
+            if (blocks.subList(i, i).contains(Terrain.OIL_SPILL) || blocks.subList(i, i).contains(Terrain.MUD)){
+                count++;
+            } else if (blocks.subList(i, i).contains(Terrain.WALL)){
+                count += 2;
             }
         }
         return count;
