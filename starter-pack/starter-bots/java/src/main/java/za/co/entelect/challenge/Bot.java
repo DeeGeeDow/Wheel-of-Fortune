@@ -92,11 +92,19 @@ public class Bot {
             return LIZARD;
         }
 
-        if (!(blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST))){
-            if (carLane != 4 && (blocksRight.contains(Terrain.LIZARD) || blocksRight.contains(Terrain.BOOST))){
-                return TURN_RIGHT;
-            } else if (carLane != 1 && (blocksLeft.contains(Terrain.LIZARD) || blocksLeft.contains(Terrain.BOOST))){
-                return TURN_LEFT;
+        if (!(containsPowerUp1(blocks)) && !isClear(blocks)){
+            if (carBlock > oppBlock) {
+                if (carLane != 4 && ((containsPowerUp1(blocksRight)) || containsPowerUp1(blocksRight))){
+                    return TURN_RIGHT;
+                } else if (carLane != 1 && ((containsPowerUp1(blocksLeft)) || containsPowerUp1(blocksLeft))){
+                    return TURN_LEFT;
+                }
+            } else {
+                if (carLane != 4 && ((containsPowerUp2(blocksRight)) || containsPowerUp2(blocksRight))){
+                    return TURN_RIGHT;
+                } else if (carLane != 1 && ((containsPowerUp2(blocksLeft)) || containsPowerUp2(blocksLeft))){
+                    return TURN_LEFT;
+                }
             }
         }
 
@@ -205,6 +213,13 @@ public class Bot {
 
     private boolean isClear(List<Object> blocks){
         return !(blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || blocks.contains(Terrain.WALL));
+    }
+
+    private boolean containsPowerUp1(List<Object> blocks){
+        return (blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST) || blocks.contains(Terrain.TWEET) || blocks.contains(Terrain.OIL_POWER));
+    }
+    private boolean containsPowerUp2(List<Object> blocks){
+        return (blocks.contains(Terrain.EMP) || blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST) || blocks.contains(Terrain.TWEET) || blocks.contains(Terrain.OIL_POWER));
     }
 
     private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {

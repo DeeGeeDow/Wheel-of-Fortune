@@ -10,18 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2ef0166-0bfc-4a18-810b-a01edab5e960" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Wheel-of-Fortune.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Wheel-of-Fortune.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/Wheel_of_Fortune_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/google_code_gson.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/google_code_gson.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/gson-2.9.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/Wheel_of_Fortune_jar/Wheel-of-Fortune.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/bot.json" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/bot.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
