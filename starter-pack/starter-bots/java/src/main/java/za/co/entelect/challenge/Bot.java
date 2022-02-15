@@ -83,21 +83,37 @@ public class Bot {
         if (isClear(blocks) && myCar.damage == 0 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.boostCounter <= 1) {
             return BOOST;
         }
-        if (myCar.boosting && !isClear(blocks) && isClear(blocksRight) && carLane != 4){
-            return TURN_RIGHT;
+
+
+        // Turn to empty Lane, prioritizing going to Lane 2 or 3
+        if (myCar.boostCounter >= 1 && !isClear(blocks)){
+            if (isClear(blocksRight) && carLane != 4){
+                if (carLane == 3 && isClear(blocksLeft)){
+                    return TURN_LEFT;
+                } else {
+                    return TURN_RIGHT;
+                }
+            } else if (isClear(blocksLeft) && carLane != 1){
+                if (carLane == 2 && isClear(blocksRight)){
+                    return TURN_RIGHT;
+                } else {
+                    return TURN_LEFT;
+                }
+            }
         }
-        if (myCar.boosting && !isClear(blocks) && isClear(blocksLeft) && carLane != 1){
-            return TURN_LEFT;
-        }
+
+
         if (myCar.boosting && !isClear(blocks) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
             return LIZARD;
         }
+
         if (!isClear(nextBlocks) && isClear(blocksRight) && carLane != 4){
             return TURN_RIGHT;
         }
         if (!isClear(nextBlocks) && isClear(blocksLeft) && carLane != 1){
             return TURN_LEFT;
         }
+
         if (isClear(blocksRight) && carLane != 4){
             if (carBlock > oppBlock && containsPowerUp1(nextBlocksRight) && !containsPowerUp1(nextBlocks)) {
                 return TURN_RIGHT;
@@ -113,7 +129,7 @@ public class Bot {
             }
         }
 
-        if (hasPowerUp(PowerUps.EMP, myCar.powerups) && carBlock < oppBlock && (carLane - carBlock) * (carLane - carBlock) < 4 && opponent.damage < 4){
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups) && carBlock < oppBlock && (carLane - carBlock) * (carLane - carBlock) < 4 && opponent.speed >= 6){
             return EMP;
         }
 
@@ -151,29 +167,39 @@ public class Bot {
         if (hasPowerUp(PowerUps.LIZARD, myCar.powerups) && !isClear(nextBlocks)){
             return LIZARD;
         }
+        /*
+        if (carLane == 1 && !isClear(nextBlocks) && ((carBlock > oppBlock && containsPowerUp1(nextBlocksRight)) || (carBlock < oppBlock && containsPowerUp2(nextBlocksRight)))){
+            return TURN_RIGHT;
+        }
+        if (carLane == 4 && !isClear(nextBlocks) && ((carBlock > oppBlock && containsPowerUp1(nextBlocksLeft)) || (carBlock < oppBlock && containsPowerUp2(nextBlocksLeft)))) {
+            return TURN_LEFT;
+        }
+        */
 
         if (myCar.damage >= 3){
-            return new FixCommand();
+            return FIX;
         }
 
         if (myCar.damage != 0 && myCar.speed <= 8){
-            return new FixCommand();
+            return FIX;
         }
 
         if (myCar.boostCounter <= 1 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && isClear(blocks)){
             return BOOST;
         }
 
-        if (hasPowerUp(PowerUps.OIL, myCar.powerups) && carBlock > oppBlock){
-            return OIL;
-        }
-
         if (myCar.speed >= 9 && hasPowerUp(PowerUps.TWEET, myCar.powerups) && carBlock > oppBlock){
             if (opponent.speed > 9) {
-                return new TweetCommand(oppLane, oppBlock+15);
-            } else if (opponent.speed == 9 && !hasPowerUp(PowerUps.BOOST, opponent.powerups)){
+                return new TweetCommand(oppLane, oppBlock+16);
+            } else if (opponent.speed == 9 && opponent.damage == 1){
+                return new TweetCommand(oppLane, oppBlock+10);
+            } else if (opponent.speed == 8 && opponent.damage == 2){
                 return new TweetCommand(oppLane, oppBlock+9);
             }
+        }
+
+        if (hasPowerUp(PowerUps.OIL, myCar.powerups) && carBlock > oppBlock){
+            return OIL;
         }
 
         return ACCELERATE;
@@ -230,11 +256,11 @@ public class Bot {
     }
 
     private boolean isClear(List<Object> blocks){
-        return !(blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || blocks.contains(Terrain.WALL));
+        return !(blocks.contains(Terrain.TRUCK) || blocks.contains(Terrain.CYBER_TRUCK) || blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || blocks.contains(Terrain.WALL));
     }
 
     private boolean containsPowerUp1(List<Object> blocks){
-        return (blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST) || blocks.contains(Terrain.OIL_POWER));
+        return (blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST));
     }
     private boolean containsPowerUp2(List<Object> blocks){
         return (blocks.contains(Terrain.EMP) || blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST));

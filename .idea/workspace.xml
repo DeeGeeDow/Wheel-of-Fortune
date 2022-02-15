@@ -10,7 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2ef0166-0bfc-4a18-810b-a01edab5e960" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
