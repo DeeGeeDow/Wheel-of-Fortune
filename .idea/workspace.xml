@@ -10,8 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2ef0166-0bfc-4a18-810b-a01edab5e960" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/game-runner-config.json" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/game-runner-config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" afterDir="false" />
     </list>
@@ -25,6 +25,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
