@@ -105,8 +105,14 @@ public class Bot {
 
         // If car is boosting, current lane has obstacle, have LIZARD
         // -> Use LIZARD
-        if (myCar.boostCounter > 1 && !isClear(blocks.subList(0, blocks.size()-3)) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
-            return LIZARD;
+        if (myCar.boostCounter > 1 && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+            if (!nextBlocks.contains(Terrain.FINISH)){
+                if (!isClear(blocks.subList(0, blocks.size()-3))){
+                    return LIZARD;
+                }
+            } else if (!isClear(nextBlocks)){
+                return LIZARD;
+            }
         }
 
         // (If car is not boosting), current lane has obstacle
@@ -201,8 +207,14 @@ public class Bot {
 
         // (If car is not boosting), have LIZARD, current Lane has obstacle
         // -> Use LIZARD
-        if (hasPowerUp(PowerUps.LIZARD, myCar.powerups) && !isClear(nextBlocks.subList(0, nextBlocks.size()-3))){
-            return LIZARD;
+        if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+            if (!nextBlocks.contains(Terrain.FINISH)){
+                if (!isClear(nextBlocks.subList(0, nextBlocks.size()-3))){
+                    return LIZARD;
+                }
+            } else if (!isClear(nextBlocks)){
+                return LIZARD;
+            }
         }
 
         // Car is still damaged by more than 3 -> FIX
