@@ -10,10 +10,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2ef0166-0bfc-4a18-810b-a01edab5e960" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/game-config.json" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/game-config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-pack/game-runner-config.json" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/game-runner-config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/bot.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Bot.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/AccelerateCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/BoostCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/ChangeLaneCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/Command.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/DecelerateCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/DoNothingCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/EmpCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/FixCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/LizardCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/OilCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/command/TweetCommand.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/entities/Car.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/entities/GameState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/entities/Lane.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/entities/Position.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Direction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/PowerUps.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/State.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-pack/starter-bots/java/src/main/java/za/co/entelect/challenge/enums/Terrain.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,8 +85,8 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/starter-pack/starter-bots/java/pom.xml" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/starter-pack/starter-bot/java/target" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15332031" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />

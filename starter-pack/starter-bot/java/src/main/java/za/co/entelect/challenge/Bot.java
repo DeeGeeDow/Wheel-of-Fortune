@@ -43,22 +43,21 @@ public class Bot {
     }
 
     public Command run() {
-        // myCar Location
+        // myCar Position
         int carLane = myCar.position.lane;
         int carBlock = myCar.position.block;
 
-        // opponent Location
+        // opponent Position
         int oppLane = opponent.position.lane;
         int oppBlock = opponent.position.block;
 
+        // Get blocks information front and sides (if exist)
         List<Object> blocks = getBlocksMax(carLane, myCar.position.block);
         List<Object> nextBlocks = getBlocksReach(carLane, myCar.position.block);
-
         List<Object> blocksRight = getBlocksMax(carLane, myCar.position.block);
         List<Object> blocksLeft = getBlocksMax(carLane, myCar.position.block);
         List<Object> nextBlocksRight = getBlocksReach(carLane, carBlock);
         List<Object> nextBlocksLeft = getBlocksReach(carLane, carBlock);
-
         if (carLane != 4) {
             blocksRight = getBlocksMax(carLane+1, carBlock - 1);
             nextBlocksRight = getBlocksReach(carLane+1, carBlock - 1);
@@ -68,10 +67,14 @@ public class Bot {
             nextBlocksLeft = getBlocksReach(carLane-1, carBlock-1);
         }
 
+        // If car too damaged
+        // -> FIX
         if (myCar.damage >= 4){
             return FIX;
         }
 
+        // If moving too slow
+        // -> Use BOOST or ACCELERATE
         if (myCar.speed <= 3){
             if (hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.damage < 3 && isClear(blocks)){
                 return BOOST;
@@ -80,12 +83,14 @@ public class Bot {
             }
         }
 
+        // Lane is clear ahead, car is undamaged, boost is running out / inactive, have BOOST
+        // -> Use BOOST
         if (isClear(blocks) && myCar.damage == 0 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.boostCounter <= 1) {
             return BOOST;
         }
 
-
-        // Turn to empty Lane, prioritizing going to Lane 2 or 3
+        // If car is boosting, current lane has obstacle
+        // -> Turn to empty Lane, prioritizing going to Lane 2 or 3
         if (myCar.boostCounter >= 1 && !isClear(blocks)){
             if (isClear(blocksRight) && carLane != 4){
                 if (carLane == 3 && isClear(blocksLeft)){
@@ -98,11 +103,14 @@ public class Bot {
             }
         }
 
-
+        // If car is boosting, current lane has obstacle, have LIZARD
+        // -> Use LIZARD
         if (myCar.boostCounter > 1 && !isClear(blocks.subList(0, blocks.size()-3)) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
             return LIZARD;
         }
 
+        // (If car is not boosting), current lane has obstacle
+        // -> Turn to empty Lane, prioritizing Lane 2 or 3
         if (!isClear(nextBlocks) && isClear(blocksRight) && carLane != 4){
             if (isClear(blocksLeft) && carLane == 3){
                 return TURN_LEFT;
@@ -113,6 +121,8 @@ public class Bot {
             return TURN_LEFT;
         }
 
+        // If current lane is clear but doesn't have any PowerUp to pick up
+        // -> Go to empty Lane with PowerUp, prioritizing Lane 2 or 3
         if (isClear(blocksRight) && carLane != 4){
             if (isClear(blocksLeft) && carLane == 3){
                 if (carBlock > oppBlock && containsPowerUp1(nextBlocksLeft) && !containsPowerUp1(nextBlocks)) {
@@ -135,10 +145,14 @@ public class Bot {
             }
         }
 
+        // If have EMP, behind enemy, current Lane is equal or adjacent to enemy Lane, enemy moving faster or equal to speed 6
+        // -> Use EMP
         if (hasPowerUp(PowerUps.EMP, myCar.powerups) && carBlock < oppBlock && (carLane - carBlock) * (carLane - carBlock) < 4 && opponent.speed >= 6){
             return EMP;
         }
 
+        // If current lane has obstacle and doesn't have any PowerUp to pick up
+        // -> Turn to lane with PowerUp, prioritizing Lane 2 or 3
         if (!(containsPowerUp1(nextBlocks)) && !isClear(nextBlocks) && !myCar.boosting){
             if (carBlock > oppBlock) {
                 if (carLane != 4 && containsPowerUp1(nextBlocksRight)){
@@ -185,22 +199,31 @@ public class Bot {
             }
         }
 
+        // (If car is not boosting), have LIZARD, current Lane has obstacle
+        // -> Use LIZARD
         if (hasPowerUp(PowerUps.LIZARD, myCar.powerups) && !isClear(nextBlocks.subList(0, nextBlocks.size()-3))){
             return LIZARD;
         }
 
+        // Car is still damaged by more than 3 -> FIX
         if (myCar.damage >= 3){
             return FIX;
         }
 
+        // Car is still damaged and is almost or going at max speed of 9
+        // -> FIX
         if (myCar.damage != 0 && myCar.speed <= 8){
             return FIX;
         }
 
+        // Car is not boosting or BOOST almost runs out, have BOOST, current Lane is clear
+        // -> Use BOOST
         if (myCar.boostCounter <= 1 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && isClear(blocks)){
             return BOOST;
         }
 
+        // If car moving at max speed or more, have TWEET, ahead of enemy
+        // -> Use TWEET depending on enemy speed
         if (myCar.speed >= 9 && hasPowerUp(PowerUps.TWEET, myCar.powerups) && carBlock > oppBlock){
             if (opponent.speed > 9) {
                 return new TweetCommand(oppLane, oppBlock+16);
@@ -211,33 +234,14 @@ public class Bot {
             }
         }
 
+        // If car has OIL PowerUp and ahead of enemy
+        // -> Use OIL PowerUp
         if (hasPowerUp(PowerUps.OIL, myCar.powerups) && carBlock > oppBlock){
             return OIL;
         }
 
-        /*
-        if (myCar.speed >= 6 && myCar.speed <= 9 && carBlock > oppBlock && !containsPowerUp1(nextBlocks)){
-            if (carLane != 4 && containsPowerUp1(nextBlocksRight) && isClear(nextBlocksRight)){
-                if (carLane == 3 && containsPowerUp1(nextBlocksLeft) && isClear(nextBlocksLeft)){
-                    return TURN_LEFT;
-                } else {
-                    return TURN_RIGHT;
-                }
-            } else if (carLane != 1 && containsPowerUp1(nextBlocksLeft) && isClear(nextBlocksLeft)){
-                return TURN_LEFT;
-            }
-        } else if (myCar.speed >= 6 && myCar.speed <= 9 && carBlock <= oppBlock && !containsPowerUp2(nextBlocks)){
-            if (carLane != 4 && containsPowerUp2(nextBlocksRight) && isClear(nextBlocksRight)){
-                if (carLane == 3 && containsPowerUp2(nextBlocksLeft) && isClear(nextBlocksLeft)){
-                    return TURN_LEFT;
-                } else {
-                    return TURN_RIGHT;
-                }
-            } else if (carLane != 1 && containsPowerUp2(nextBlocksLeft) && isClear(nextBlocksLeft)){
-                return TURN_LEFT;
-            }
-        }
-        */
+        // If current lane doesn't have any PowerUp to pick up and moving at speed 8 or 9
+        // -> Go to empty Lane with PowerUp, prioritizing Lane 2 or 3
         if (carBlock <= oppBlock){
             if ((myCar.speed == 8 || myCar.speed == 9) && !containsPowerUp2(nextBlocks)){
                 if (carLane != 4 && containsPowerUp2(nextBlocksRight) && isClear(nextBlocksRight)) {
@@ -264,10 +268,21 @@ public class Bot {
             }
         }
 
-        if (!(blocks.subList(0, 1).contains(Terrain.EMP) || blocks.subList(0, 1).contains(Terrain.LIZARD) || blocks.subList(0, 1).contains(Terrain.EMPTY) || blocks.subList(0, 1).contains(Terrain.BOOST) || blocks.subList(0, 1).contains(Terrain.OIL_POWER) || blocks.subList(0, 1).contains(Terrain.TWEET)) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+        // If blocks in front of car is obstacle (including Cyber Truck) and has LIZARD
+        // -> Use LIZARD
+        if (
+                !( blocks.subList(0, 1).contains(Terrain.EMP)
+                || blocks.subList(0, 1).contains(Terrain.LIZARD)
+                || blocks.subList(0, 1).contains(Terrain.EMPTY)
+                || blocks.subList(0, 1).contains(Terrain.BOOST)
+                || blocks.subList(0, 1).contains(Terrain.OIL_POWER)
+                || blocks.subList(0, 1).contains(Terrain.TWEET)
+                ) && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
             return LIZARD;
         }
 
+        // None of the condition above is met
+        // -> Accelerate
         return ACCELERATE;
     }
 

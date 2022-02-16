@@ -4,6 +4,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/starter-pack/starter-bots/java/pom.xml" />
+        <option value="$PROJECT_DIR$/starter-pack/starter-bot/java/pom.xml" />
       </list>
     </option>
   </component>

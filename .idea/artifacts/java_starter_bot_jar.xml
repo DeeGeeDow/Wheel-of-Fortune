@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="java-starter-bot:jar">
+    <output-path>$PROJECT_DIR$/starter-pack/starter-bot/java/target</output-path>
+    <root id="archive" name="java-starter-bot.jar">
+      <element id="module-output" name="java-starter-bot" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.2/gson-2.8.2.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
