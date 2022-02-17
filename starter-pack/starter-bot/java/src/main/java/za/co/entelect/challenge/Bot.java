@@ -52,8 +52,8 @@ public class Bot {
         int oppBlock = opponent.position.block;
 
         // Get blocks information front and sides (if exist)
-        List<Object> blocks = getBlocksMax(carLane, myCar.position.block);
-        List<Object> nextBlocks = getBlocksReach(carLane, myCar.position.block);
+        List<Object> blocks = getBlocksMax(carLane, myCar.position.block); // 15 blocks ke depan
+        List<Object> nextBlocks = getBlocksReach(carLane, myCar.position.block); // 9 blocks ke depan
         List<Object> blocksRight = getBlocksMax(carLane, myCar.position.block);
         List<Object> blocksLeft = getBlocksMax(carLane, myCar.position.block);
         List<Object> nextBlocksRight = getBlocksReach(carLane, carBlock);
@@ -72,7 +72,7 @@ public class Bot {
         boolean isAhead = carBlock > oppBlock;
         boolean isBehind = !isAhead;
         boolean isFarFromEachOther = (carBlock - oppBlock) * (carBlock - oppBlock) > 2500; // More than 50 blocks apart
-        boolean onEMPRange = carBlock < oppBlock && (carLane - carLane) * (carLane - carLane) < 4;
+        boolean onEMPRange = carBlock < oppBlock && (carLane - oppLane) * (carLane - oppLane) < 4;
 
         // If car is too damaged
         // -> FIX
@@ -233,15 +233,10 @@ public class Bot {
 
         // Car is still damaged and is almost or going at max speed of 9 / can boost / boosting
         // -> FIX
-        if (myCar.damage != 0 && (myCar.speed <= 8 || hasPowerUp(PowerUps.BOOST, myCar.powerups) || myCar.boostCounter > 1)){
+        if (myCar.damage != 0 && (myCar.speed >= 8 || hasPowerUp(PowerUps.BOOST, myCar.powerups) || myCar.boostCounter > 1)){
             return FIX;
         }
 
-        // Car is not boosting or BOOST almost runs out, have BOOST, current Lane is clear
-        // -> Use BOOST
-        if (myCar.boostCounter <= 1 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && isClear(blocks)) {
-            return BOOST;
-        }
 
         // If car moving at max speed or more, have TWEET, far away from each other or placed behind (to prevent tweet from backfiring)
         // -> Use TWEET depending on enemy speed and location
