@@ -52,8 +52,10 @@ public class Bot {
         int oppBlock = opponent.position.block;
 
         // Get blocks information front and sides (if exist)
-        List<Object> blocks = getBlocksMax(carLane, myCar.position.block); // 15 blocks ke depan
-        List<Object> nextBlocks = getBlocksReach(carLane, myCar.position.block); // 9 blocks ke depan
+        List<Object> blocks = getBlocksMax(carLane, myCar.position.block); // Get information for 15 blocks
+        List<Object> nextBlocks = getBlocksReach(carLane, myCar.position.block); // Get information for 9 blocks
+
+        // Default initialization, unused if Lane does not exist
         List<Object> blocksRight = getBlocksMax(carLane, myCar.position.block);
         List<Object> blocksLeft = getBlocksMax(carLane, myCar.position.block);
         List<Object> nextBlocksRight = getBlocksReach(carLane, carBlock);
@@ -67,22 +69,23 @@ public class Bot {
             nextBlocksLeft = getBlocksReach(carLane-1, carBlock);
         }
 
-        boolean canTurnRight = (carLane != 4);
-        boolean canTurnLeft = (carLane != 1);
-        boolean isAhead = carBlock > oppBlock;
-        boolean isBehind = !isAhead;
-        boolean isFarFromEachOther = (carBlock - oppBlock) * (carBlock - oppBlock) > 2500; // More than 50 blocks apart
+        boolean canTurnRight = (carLane != 4); // If there's a lane on the right
+        boolean canTurnLeft = (carLane != 1); // If there's a lane on the left
+        boolean isAhead = carBlock > oppBlock; // If myCar is ahead of opponent
+        boolean isBehind = !isAhead; // If myCar is behind opponent
+        boolean isFarFromEachOther = (carBlock - oppBlock) * (carBlock - oppBlock) > 2500; // myCar and opponent is more than 50 blocks apart
         boolean onEMPRange = carBlock < oppBlock && (carLane - oppLane) * (carLane - oppLane) < 4;
 
-        // If car is too damaged
+        // If car is too damaged (and can't move quickly)
         // -> FIX
         if (myCar.damage >= 4){
             return FIX;
         }
 
-        // If moving too slow
+        // If car is moving too slow
         // -> Use BOOST or ACCELERATE
         if (myCar.speed <= 3){
+            // If the lane is clear, not too damaged, and have BOOST PowerUp
             if (hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.damage < 3 && isClear(blocks)){
                 return BOOST;
             } else {
@@ -90,12 +93,14 @@ public class Bot {
             }
         }
 
+        // BOOST CAN BE USED MAXIMALLY
         // Current lane is clear, car is undamaged, boost is running out / inactive, have BOOST
         // -> Use BOOST
         if (isClear(blocks) && myCar.damage == 0 && hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.boostCounter <= 1) {
             return BOOST;
         }
 
+        // MOVING TO EMPTY LANE
         // If car is boosting, current lane has obstacle
         // -> Turn to empty Lane, prioritizing going to Lane 2 or 3
         if (myCar.boostCounter > 1 && !isClear(blocks)){
@@ -110,6 +115,7 @@ public class Bot {
             }
         }
 
+        // DODGING OBSTACLE USING LIZARD
         // If car is boosting, current lane has obstacle, (adjacent lanes have obstacle), have LIZARD
         // -> Use LIZARD
         if (myCar.boostCounter > 1 && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
@@ -122,6 +128,7 @@ public class Bot {
             }
         }
 
+        // MOVING TO EMPTY LANE
         // If car is not boosting, current lane has obstacle, (adjacent lanes have obstacle)
         // -> Turn to empty Lane, prioritizing Lane 2 or 3
         if (myCar.boostCounter <= 1 && !isClear(nextBlocks)){
@@ -136,6 +143,7 @@ public class Bot {
             }
         }
 
+        // MOVING TO HIGHER VALUE LANE
         // If current lane is clear but doesn't have any PowerUp to pick up
         // -> Go to empty Lane with PowerUp, prioritizing Lane 2 or 3
         if (isClear(blocksRight) && canTurnRight){
@@ -160,6 +168,7 @@ public class Bot {
             }
         }
 
+        // DODGING OBSTACLE USING LIZARD
         // If car speed = 9, have LIZARD, current Lane has obstacle
         // -> Use LIZARD
         if (myCar.boostCounter <= 1 && myCar.speed > 8 && hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
@@ -172,6 +181,7 @@ public class Bot {
             }
         }
 
+        // MOVING TO HIGHER VALUE LANE
         // If current lane has obstacle and doesn't have any PowerUp to pick up
         // -> Turn to lane with PowerUp, prioritizing Lane 2 or 3
         if (!(containsPowerUp1(nextBlocks)) && !isClear(nextBlocks) && !myCar.boosting){
@@ -220,6 +230,7 @@ public class Bot {
             }
         }
 
+        // USING EMP
         // If have EMP, behind enemy, current Lane is equal or adjacent to enemy Lane, enemy moving faster or equal to speed 6
         // -> Use EMP
         if (hasPowerUp(PowerUps.EMP, myCar.powerups) && onEMPRange && opponent.speed >= 6){
@@ -231,13 +242,13 @@ public class Bot {
             return FIX;
         }
 
-        // Car is still damaged and is almost or going at max speed of 9 / can boost / boosting
+        // Car is still damaged, and is almost or going at max speed of 9 or it can boost
         // -> FIX
-        if (myCar.damage != 0 && (myCar.speed >= 8 || hasPowerUp(PowerUps.BOOST, myCar.powerups) || myCar.boostCounter > 1)){
+        if (myCar.damage != 0 && (myCar.speed >= 8 || hasPowerUp(PowerUps.BOOST, myCar.powerups))){
             return FIX;
         }
 
-
+        // USING TWEET
         // If car moving at max speed or more, have TWEET, far away from each other or placed behind (to prevent tweet from backfiring)
         // -> Use TWEET depending on enemy speed and location
         if (myCar.speed >= 9 && hasPowerUp(PowerUps.TWEET, myCar.powerups) && (isFarFromEachOther || carBlock > oppBlock+16)){
@@ -258,6 +269,7 @@ public class Bot {
             }
         }
 
+        // USING OIL
         // If car has OIL PowerUp and a bit far ahead of enemy
         // -> Use OIL PowerUp
         if (hasPowerUp(PowerUps.OIL, myCar.powerups) && (carBlock - oppBlock) > 16){
@@ -265,7 +277,7 @@ public class Bot {
         }
 
         // None of the condition above is met
-        // -> Accelerate
+        // -> simply Accelerate
         return ACCELERATE;
     }
 
@@ -273,6 +285,7 @@ public class Bot {
      * Returns map of blocks and the objects in the for the current lanes, returns the amount of blocks that can be
      * traversed at max speed.
      **/
+    // Get information for 15 blocks of a lane
     private List<Object> getBlocksMax(int lane, int block) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
@@ -289,7 +302,7 @@ public class Bot {
         }
         return blocks;
     }
-
+    // Get information for 9 blocks of a lane
     private List<Object> getBlocksReach(int lane, int block) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
@@ -306,19 +319,20 @@ public class Bot {
         }
         return blocks;
     }
-
+    // Check if range of blocks of a lane is clear of obstacles (excluding Cyber Truck)
     private boolean isClear(List<Object> blocks){
         return !(blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || blocks.contains(Terrain.WALL));
     }
-
+    // Check if range of blocks of a lane contain PowerUp LIZARD or BOOST
     private boolean containsPowerUp1(List<Object> blocks) {
         return (blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST));
     }
-    // EMP only useful when myCar is behind enemy
+    // EMP only useful when myCar is behind enemy, check if range of blocks of a lane contain PowerUp EMP, LIZARD, or BOOST
     private boolean containsPowerUp2(List<Object> blocks){
         return (blocks.contains(Terrain.EMP) || blocks.contains(Terrain.LIZARD) || blocks.contains(Terrain.BOOST));
     }
 
+    // Check if car has the PowerUp selected
     private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {
         for (PowerUps powerUp: available) {
             if (powerUp.equals(powerUpToCheck)) {
